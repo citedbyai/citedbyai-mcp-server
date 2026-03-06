@@ -1,0 +1,30 @@
+{
+  "qualifiedName": "@piiiico/aeo-audit",
+  "displayName": "AEO Audit",
+  "iconUrl": "https://synligdigital.no/favicon.png",
+  "homepage": "https://synligdigital.no",
+  "license": "MIT",
+  "description": "Analyze any website for AI visibility (AEO/GEO). Returns score 0-100 with breakdown, issues, and prioritized recommendations for appearing in ChatGPT, Claude, and Perplexity answers.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/piiiico/aeo-mcp-server"
+  },
+  "remote": {
+    "transportType": "streamable-http",
+    "url": "https://aeo-mcp-server.amdal-dev.workers.dev/mcp"
+  },
+  "tools": [
+    {
+      "name": "analyze_aeo",
+      "description": "Full AEO audit — score 0-100, grade A-F, breakdown by category, issues, and recommendations"
+    },
+    {
+      "name": "get_aeo_score",
+      "description": "Quick AEO score check — returns score and grade only"
+    },
+    {
+      "name": "check_ai_readiness",
+      "description": "Check if AI crawlers (GPTBot, ClaudeBot) can access the site, and if llms.txt is present"
+    }
+  ]
+}
