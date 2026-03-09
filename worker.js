@@ -423,7 +423,7 @@ const TOOLS = [
 
 // ─── MCP Handler ─────────────────────────────────────────────────────────────
 
-async function handleMcp(req) {
+async function handleMcp(req, env) {
   let body;
   try {
     body = await req.json();
@@ -486,10 +486,34 @@ async function handleMcp(req) {
         });
       }
 
+      const t0 = Date.now();
+      const referrer = req.headers.get("referer") || req.headers.get("origin") || "direct";
+      const userAgent = req.headers.get("user-agent") || "";
+
+      const logEvent = (toolName, result) => {
+        try {
+          env.AEO_ANALYTICS?.writeDataPoint({
+            blobs: [
+              toolName,
+              parsedUrl.hostname,
+              referrer.slice(0, 128),
+              userAgent.slice(0, 128),
+              result?.grade || "",
+            ],
+            doubles: [
+              result?.totalScore ?? -1,
+              Date.now() - t0,
+            ],
+            indexes: [toolName],
+          });
+        } catch { /* analytics failure must not break the response */ }
+      };
+
       try {
         if (toolName === "analyze_aeo") {
           const result = await runAudit(parsedUrl.href);
           const summary = formatAuditSummary(result);
+          logEvent("analyze_aeo", result);
           return jsonRpcOk(id, {
             content: [
               { type: "text", text: summary },
@@ -501,6 +525,7 @@ async function handleMcp(req) {
         if (toolName === "get_aeo_score") {
           const result = await runAudit(parsedUrl.href);
           const text = `AEO Score for ${result.url}: ${result.totalScore}/100 (Grade: ${result.grade})\n\nTop 3 issues:\n${result.issues.slice(0, 3).map((i, n) => `${n+1}. ${i}`).join('\n')}\n\nFor full audit, use analyze_aeo tool.\nLearn more: synligdigital.no`;
+          logEvent("get_aeo_score", result);
           return jsonRpcOk(id, {
             content: [{ type: "text", text }]
           });
@@ -522,6 +547,7 @@ async function handleMcp(req) {
           const maxReadiness = result.breakdown.technical.max + result.breakdown.aiSignals.max;
 
           const text = `AI Readiness for ${result.url}:\nScore: ${readinessScore}/${maxReadiness}\n\n${issues.length === 0 ? "✅ Site is well-configured for AI crawlers" : "Issues found:\n" + issues.join('\n')}\n\nTechnical score: ${tech.score}/${tech.max}\nAI signals score: ${ai.score}/${ai.max}\n\nFull report: synligdigital.no`;
+          logEvent("check_ai_readiness", result);
           return jsonRpcOk(id, {
             content: [{ type: "text", text }]
           });
@@ -533,6 +559,13 @@ async function handleMcp(req) {
         });
 
       } catch (e) {
+        try {
+          env.AEO_ANALYTICS?.writeDataPoint({
+            blobs: [toolName, parsedUrl.hostname, referrer.slice(0, 128), userAgent.slice(0, 128), "error"],
+            doubles: [-1, Date.now() - t0],
+            indexes: [toolName],
+          });
+        } catch { /* ignore */ }
         return jsonRpcOk(id, {
           content: [{ type: "text", text: `Audit failed: ${e.message}` }],
           isError: true
@@ -594,7 +627,7 @@ function jsonRpcError(id, code, message) {
 // ─── Main Worker ─────────────────────────────────────────────────────────────
 
 export default {
-  async fetch(req) {
+  async fetch(req, env) {
     const url = new URL(req.url);
 
     // CORS preflight
@@ -641,6 +674,108 @@ export default {
       });
     }
 
+    // ERC-8004 agent registration metadata
+    if (url.pathname === "/.well-known/agent-registration.json") {
+      return new Response(JSON.stringify({
+        type: "https://eips.ethereum.org/EIPS/eip-8004#registration-v1",
+        name: "AEO Audit by Synlig",
+        description: "AI visibility auditor for business websites. Analyzes schema markup, meta tags, content quality, technical setup, and AI crawler access. Returns score 0-100 with prioritized recommendations. Operated by Synlig (synligdigital.no), Stavanger, Norway.",
+        image: "https://synligdigital.no/logo.png",
+        services: [
+          {
+            name: "MCP",
+            endpoint: `https://${url.hostname}/mcp`,
+            version: "1.0.0",
+            protocol: "MCP Streamable HTTP"
+          },
+          {
+            name: "A2A",
+            endpoint: `https://${url.hostname}/.well-known/agent-card.json`,
+            version: "0.3.0",
+            a2aSkills: [
+              { id: "analyze_aeo", name: "AEO Audit", tags: ["aeo", "seo", "audit", "schema", "ai-visibility"] },
+              { id: "get_aeo_score", name: "AEO Score Check", tags: ["aeo", "score"] },
+              { id: "check_ai_readiness", name: "AI Readiness Check", tags: ["ai", "crawlers", "llms.txt"] }
+            ]
+          },
+          {
+            name: "web",
+            endpoint: "https://synligdigital.no"
+          }
+        ],
+        registrations: [
+          { chain: "eip155:8453", address: "0x90EE1EbcCFA2021711C595E1410e22401570B4AC" }
+        ]
+      }), {
+        headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+      });
+    }
+
+    // REST audit endpoint — GET /audit?url=example.com
+    if (url.pathname === "/audit") {
+      if (req.method !== "GET") {
+        return new Response(JSON.stringify({ error: "Use GET /audit?url=example.com" }), {
+          status: 405,
+          headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+        });
+      }
+      const targetUrl = url.searchParams.get("url");
+      if (!targetUrl) {
+        return new Response(JSON.stringify({ error: "Missing ?url= parameter", example: "/audit?url=example.com" }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+        });
+      }
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(targetUrl.startsWith("http") ? targetUrl : `https://${targetUrl}`);
+      } catch (e) {
+        return new Response(JSON.stringify({ error: "Invalid URL", url: targetUrl }), {
+          status: 400,
+          headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+        });
+      }
+      const t0 = Date.now();
+      const referer = req.headers.get("referer") || req.headers.get("origin") || "direct";
+      const ua = req.headers.get("user-agent") || "";
+      try {
+        const result = await runAudit(parsedUrl.href);
+        // Log REST audit call to Analytics Engine
+        try {
+          env.AEO_ANALYTICS?.writeDataPoint({
+            blobs: ["rest_audit", parsedUrl.hostname, referer.slice(0, 128), ua.slice(0, 128), result.grade],
+            doubles: [result.totalScore, Date.now() - t0],
+            indexes: ["rest_audit"],
+          });
+        } catch { /* ignore */ }
+        // Return structured JSON for agent consumption
+        return new Response(JSON.stringify({
+          url: result.url,
+          score: result.totalScore,
+          grade: result.grade,
+          components: {
+            schema: { score: result.breakdown.schema.score, max: result.breakdown.schema.max },
+            meta: { score: result.breakdown.meta.score, max: result.breakdown.meta.max },
+            content: { score: result.breakdown.content.score, max: result.breakdown.content.max },
+            technical: { score: result.breakdown.technical.score, max: result.breakdown.technical.max },
+            aiSignals: { score: result.breakdown.aiSignals.score, max: result.breakdown.aiSignals.max }
+          },
+          issues: result.issues || [],
+          recommendations: result.recommendations || [],
+          summary: formatAuditSummary(result),
+          timestamp: result.auditedAt,
+          learnMore: "https://synligdigital.no"
+        }), {
+          headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: `Audit failed: ${e.message}`, url: parsedUrl.href }), {
+          status: 500,
+          headers: { "Content-Type": "application/json", ...CORS_HEADERS }
+        });
+      }
+    }
+
     // MCP endpoint
     if (url.pathname === "/mcp") {
       if (req.method !== "POST") {
@@ -649,12 +784,12 @@ export default {
           headers: { "Content-Type": "application/json", ...CORS_HEADERS }
         });
       }
-      return handleMcp(req);
+      return handleMcp(req, env);
     }
 
     return new Response(JSON.stringify({
       error: "Not found",
-      routes: { "/": "Server info", "/health": "Health check", "/mcp": "MCP endpoint (POST)", "/.well-known/agent-card.json": "A2A agent card" }
+      routes: { "/": "Server info", "/health": "Health check", "/audit": "REST audit endpoint (GET ?url=)", "/mcp": "MCP endpoint (POST)", "/.well-known/agent-card.json": "A2A agent card" }
     }), {
       status: 404,
       headers: { "Content-Type": "application/json", ...CORS_HEADERS }
