@@ -1,0 +1,51 @@
+{
+  "$schema": "https://glama.ai/mcp/servers/schema.json",
+  "name": "citedbyai-mcp-server",
+  "displayName": "CPS® Lite by Cited By AI",
+  "description": "Free AI citation readiness checker powered by Cited By AI's CPS® framework. Instantly scores any website 0-100 across structured data, meta tags, content quality, technical config, and AI signals. Returns a grade (A-F) and the top issues blocking AI citation in ChatGPT, Claude, Perplexity, Gemini, and Copilot. No auth required.",
+  "license": "MIT",
+  "homepage": "https://citedbyai.info",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/citedbyai/citedbyai-mcp-server"
+  },
+  "author": {
+    "name": "Cited By AI",
+    "url": "https://citedbyai.info"
+  },
+  "server": {
+    "transport": "streamable-http",
+    "url": "https://citedbyai-mcp-server.citedbyai.workers.dev/mcp"
+  },
+  "tools": [
+    {
+      "name": "get_aeo_score",
+      "description": "Get a quick AI citation readiness score for any website. Returns grade (A-F), score (0-100), and top 3 issues blocking AI citation. Powered by Cited By AI's CPS® framework."
+    },
+    {
+      "name": "analyze_aeo",
+      "description": "Full AI visibility audit across 5 dimensions: structured data, meta tags, content quality, technical config, and AI signals. Returns complete issues list and prioritised recommendations."
+    },
+    {
+      "name": "check_ai_readiness",
+      "description": "Check whether a website is properly configured for AI crawler access. Checks robots.txt for GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot blocks, llms.txt presence, and other AI visibility signals."
+    }
+  ],
+  "categories": [
+    "Search",
+    "AI & Machine Learning",
+    "Marketing"
+  ],
+  "keywords": [
+    "aeo",
+    "aseo",
+    "ai-search",
+    "seo",
+    "citation-probability",
+    "mcp",
+    "cloudflare-workers",
+    "answer-engine-optimization",
+    "ai-visibility",
+    "cps"
+  ]
+}
