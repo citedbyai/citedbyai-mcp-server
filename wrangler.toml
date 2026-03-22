@@ -1,0 +1,7 @@
+name = "citedbyai-mcp-server"
+main = "worker.js"
+compatibility_date = "2025-03-26"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"

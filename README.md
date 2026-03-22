@@ -1,72 +1,81 @@
-# AEO Audit MCP Server
+# CPS® Lite — AI Citation Readiness Checker
 
-**AEO (Answer Engine Optimization) audit tool** — check any website's AI visibility score and get actionable recommendations.
+**Free AI visibility score for any website. Powered by Cited By AI's CPS® framework.**
 
-**Live endpoint:** `https://aeo-mcp-server.amdal-dev.workers.dev/mcp`
-**Protocol:** MCP Streamable HTTP (2025-03-26)
-**Free to use** — no auth required
+[![MCP](https://img.shields.io/badge/MCP-Streamable%20HTTP-blue)](https://spec.modelcontextprotocol.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com/)
 
 ## What it does
 
-Analyzes why businesses don't appear in ChatGPT, Claude, Perplexity, and other AI assistant answers. Returns:
+Checks any website's AI citation readiness across 5 dimensions:
 
-- **Score 0-100** with letter grade (A–F)
-- **Breakdown**: schema markup, meta tags, content quality, technical config, AI signals
-- **Issues**: specific problems blocking AI visibility
-- **Recommendations**: prioritized action list
+- **Structured Data** — JSON-LD schema markup (25 pts)
+- **Meta Tags** — title, description, OpenGraph (20 pts)
+- **Content Quality** — headings, word count, FAQ, citable sentences (22 pts)
+- **Technical Config** — robots.txt, llms.txt, sitemap, speed (18 pts)
+- **AI Signals** — speakable schema, statistics, direct-answer format (15 pts)
+
+Returns a grade (A–F) and score (0–100) in under a second. No auth required.
+
+## Live endpoint
+
+```
+https://citedbyai-mcp-server.citedbyai-gmail.workers.dev/mcp
+```
 
 ## Tools
 
-### `analyze_aeo(url)`
-Full audit. Returns score, grade, category breakdown, all issues, and ranked recommendations.
-
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "tools/call",
-  "params": {
-    "name": "analyze_aeo",
-    "arguments": { "url": "https://example.com" }
-  }
-}
-```
-
 ### `get_aeo_score(url)`
-Quick check — score and grade only.
+Quick CPS® Lite grade + top 3 issues blocking AI citation.
+
+### `analyze_aeo(url)`
+Full breakdown across all 5 dimensions with complete issues list and prioritised recommendations.
 
 ### `check_ai_readiness(url)`
-Checks if AI crawlers (GPTBot, ClaudeBot) are blocked, if `/llms.txt` exists, and other crawler access signals.
+Checks whether AI crawlers (GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot) are blocked, whether `/llms.txt` exists, and other crawler access signals.
 
-## Usage with Claude Desktop
+## Use with Claude Desktop
 
 Add to `claude_desktop_config.json`:
 
 ```json
 {
   "mcpServers": {
-    "aeo-audit": {
-      "url": "https://aeo-mcp-server.amdal-dev.workers.dev/mcp",
+    "citedbyai": {
+      "url": "https://citedbyai-mcp-server.citedbyai-gmail.workers.dev/mcp",
       "type": "streamable-http"
     }
   }
 }
 ```
 
-## Usage with Cursor / other MCP clients
+## REST endpoint
 
-Endpoint: `https://aeo-mcp-server.amdal-dev.workers.dev/mcp`
-Transport: Streamable HTTP (POST)
+```
+GET /audit?url=example.com
+```
 
-## What AEO checks
+Returns full JSON result — useful for embedding in your own tools or homepage widgets.
 
-- **Structured data** (JSON-LD schema): LocalBusiness, FAQPage, AggregateRating, OpeningHours
-- **Meta tags**: Title, description, OpenGraph
-- **Content quality**: Word count, H1/H2 headings, location signals, FAQ section, prices
-- **Technical**: robots.txt AI bot access, llms.txt, sitemap, load speed
-- **AI signals**: Speakable schema, statistics/numbers, structured content
+## Full CPS® Audit
 
-## About
+This tool runs a CPS® Lite scan — instant, free, 5 dimensions.
 
-Built by [Synlig Digital](https://synligdigital.no) — AEO services for Norwegian businesses.
-Contact: hei@synligdigital.no
+The full CPS® audit covers all 5 AI platforms (ChatGPT, Claude, Perplexity, Gemini, Copilot) with:
+- Per-prompt Share of Voice measurement
+- E-E-A-T structured scoring
+- Citation source tracking
+- Brand mention scanning across 7 platforms
+- 30-section audit report
+
+**[Book a full CPS® audit →](https://citedbyai.info/#contact)**
+
+## Powered by
+
+**[Cited By AI](https://citedbyai.info)** — ASEO (AI Search Engine Optimisation) specialists.  
+CPS® (Citation Probability Score) is a registered trademark of Cited By AI.
+
+## License
+
+MIT — free to use, fork, and build on.
