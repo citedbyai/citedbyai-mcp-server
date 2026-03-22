@@ -6,6 +6,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-orange)](https://workers.cloudflare.com/)
 
+[![citedbyai-mcp-server MCP server](https://glama.ai/mcp/servers/citedbyai/citedbyai-mcp-server/badges/card.svg)](https://glama.ai/mcp/servers/citedbyai/citedbyai-mcp-server)
+
 ## What it does
 
 Checks any website's AI citation readiness across 5 dimensions:
