@@ -10,11 +10,11 @@
 
 Checks any website's AI citation readiness across 5 dimensions:
 
-- **Structured Data** — JSON-LD schema markup (25 pts)
-- **Meta Tags** — title, description, OpenGraph (20 pts)
-- **Content Quality** — headings, word count, FAQ, citable sentences (22 pts)
-- **Technical Config** — robots.txt, llms.txt, sitemap, speed (18 pts)
-- **AI Signals** — speakable schema, statistics, direct-answer format (15 pts)
+- **Structured Data** — JSON-LD schema markup
+- **Meta Tags** — title, description, OpenGraph
+- **Content Quality** — headings, word count, FAQ, citable sentences
+- **Technical Config** — robots.txt, llms.txt, sitemap, speed
+- **AI Signals** — speakable schema, statistics, direct-answer format
 
 Returns a grade (A–F) and score (0–100) in under a second. No auth required.
 
