@@ -1,6 +1,6 @@
-# CPS® Lite — AI Citation Readiness Checker
+# CPS Lite — AI Citation Readiness Checker
 
-**Free AI visibility score for any website. Powered by Cited By AI's CPS® framework.**
+**Free AI visibility score for any website. Powered by Cited By AI's CPS framework.**
 
 [![MCP](https://img.shields.io/badge/MCP-Streamable%20HTTP-blue)](https://spec.modelcontextprotocol.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
@@ -58,18 +58,18 @@ GET /audit?url=example.com
 
 Returns full JSON result — useful for embedding in your own tools or homepage widgets.
 
-## Full CPS® Audit
+## Full CPS Audit
 
-This tool runs a CPS® Lite scan — instant, free, 5 dimensions.
+This tool runs a CPS Lite scan — instant, free, 5 dimensions.
 
-The full CPS® audit covers all 5 AI platforms (ChatGPT, Claude, Perplexity, Gemini, Copilot) with:
+The full CPS audit covers all 5 AI platforms (ChatGPT, Claude, Perplexity, Gemini, Copilot) with:
 - Per-prompt Share of Voice measurement
 - E-E-A-T structured scoring
 - Citation source tracking
 - Brand mention scanning across 7 platforms
 - 30-section audit report
 
-**[Book a full CPS® audit →](https://citedbyai.info/#contact)**
+**[Book a full CPS audit →](https://citedbyai.info/#contact)**
 
 ## Powered by
 
