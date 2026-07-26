@@ -1,0 +1,10 @@
+﻿# Wrangler local cache and secrets
+.wrangler/
+.dev.vars
+.dev.vars.*
+
+# Node
+node_modules/
+
+# Logs
+*.log
