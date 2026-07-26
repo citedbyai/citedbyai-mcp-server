@@ -27,7 +27,7 @@ https://citedbyai-mcp-server.citedbyai-gmail.workers.dev/mcp
 ## Tools
 
 ### `get_aeo_score(url)`
-Quick CPS® Lite grade + top 3 issues blocking AI citation.
+Quick CPS Lite grade + top 3 issues blocking AI citation.
 
 ### `analyze_aeo(url)`
 Full breakdown across all 5 dimensions with complete issues list and prioritised recommendations.
@@ -74,7 +74,7 @@ The full CPS audit covers all 5 AI platforms (ChatGPT, Claude, Perplexity, Gemin
 ## Powered by
 
 **[Cited By AI](https://citedbyai.info)** — ASEO (AI Search Engine Optimisation) specialists.  
-CPS® (Citation Probability Score) is a registered trademark of Cited By AI.
+CPS (Citation Probability Score) is a registered trademark of Cited By AI.
 
 ## License
 
