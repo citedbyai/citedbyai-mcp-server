@@ -74,7 +74,7 @@ The full CPS audit covers all 5 AI platforms (ChatGPT, Claude, Perplexity, Gemin
 ## Powered by
 
 **[Cited By AI](https://citedbyai.info)** — ASEO (AI Search Engine Optimisation) specialists.  
-CPS (Citation Probability Score) is a registered trademark of Cited By AI.
+CPS (Citation Probability Score) is a proprietary metric of Cited By AI.
 
 ## License
 
