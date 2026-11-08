@@ -1,16 +1,16 @@
 /**
- * CPS® Lite — AI Citation Readiness Checker
+ * CPS Lite — AI Citation Readiness Checker
  * citedbyai-mcp-server — Cloudflare Worker
  *
  * Implements MCP (Model Context Protocol) Streamable HTTP transport.
- * Exposes AEO/ASEO audit tools powered by Cited By AI's CPS® framework.
+ * Exposes AEO/ASEO audit tools powered by Cited By AI's CPS framework.
  *
  * Protocol: JSON-RPC 2.0 over HTTP POST /mcp
  * Free to use — no auth required
- * Full CPS® audit: https://citedbyai.info/#contact
+ * Full CPS audit: https://citedbyai.info/#contact
  *
  * Tools:
- *   get_aeo_score(url)       — Quick CPS® Lite grade (A–F) + 3 findings + CTA
+ *   get_aeo_score(url)       — Quick CPS Lite grade (A–F) + 3 findings + CTA
  *   analyze_aeo(url)         — Full breakdown across 5 dimensions
  *   check_ai_readiness(url)  — AI crawler access audit
  */
@@ -222,7 +222,7 @@ function analyzeContent(html) {
   const hasPhone = /(?:\+\d{1,3}[\s.-]?)?\(?\d{3,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,6}/i.test(html);
   const hasTeam = /(?:team|about us|our staff|staff|founder|ceo|our experts|our story)/i.test(html.toLowerCase());
 
-  // CPS® Signal: does the page have a single citable sentence describing what the business does?
+  // CPS Signal: does the page have a single citable sentence describing what the business does?
   const hasCitableSentence = /(?:we (?:help|provide|offer|specialise|specialize)|our (?:mission|goal|service|platform|tool)|(?:the |a )?(?:leading|trusted|only|first)\s+\w+\s+(?:for|that|which))/i.test(html);
 
   let score = 0;
@@ -300,7 +300,7 @@ function analyzeAISignals(html, llmsTxt) {
   const hasVideo = /<video|youtube\.com\/embed|vimeo\.com\/video/i.test(html);
   const hasLlmsContent = !!(llmsTxt && llmsTxt.length > 100);
 
-  // CPS® specific: does the page have answer-format content?
+  // CPS specific: does the page have answer-format content?
   const hasDirectAnswers = /(?:what is|how to|how does|why does|when should|what are the|the answer is|in short|in summary)/i.test(html);
 
   let score = 0;
@@ -389,7 +389,7 @@ async function runAudit(url) {
     issues: [...schema.issues, ...meta.issues, ...content.issues, ...technical.issues, ...aiSignals.issues],
     recommendations: [...schema.recommendations, ...meta.recommendations, ...content.recommendations, ...technical.recommendations, ...aiSignals.recommendations],
     auditedAt: new Date().toISOString(),
-    poweredBy: "CPS® Lite by Cited By AI",
+    poweredBy: "CPS Lite by Cited By AI",
     fullAudit: CTA_URL,
     learnMore: HOME_URL,
   };
@@ -400,7 +400,7 @@ async function runAudit(url) {
 const TOOLS = [
   {
     name: "get_aeo_score",
-    description: "Get a quick AI citation readiness score for any website. Powered by Cited By AI's CPS® (Citation Probability Score) framework. Returns a grade (A–F), numeric score (0–100), and the 3 most important issues blocking AI citation. Use this for a fast check before deciding whether a full CPS® audit is needed.",
+    description: "Get a quick AI citation readiness score for any website. Powered by Cited By AI's CPS (Citation Probability Score) framework. Returns a grade (A–F), numeric score (0–100), and the 3 most important issues blocking AI citation. Use this for a fast check before deciding whether a full CPS audit is needed.",
     inputSchema: {
       type: "object",
       properties: {
@@ -414,7 +414,7 @@ const TOOLS = [
   },
   {
     name: "analyze_aeo",
-    description: "Run a full AI visibility audit on a website using Cited By AI's CPS® Lite framework. Returns a score 0–100, grade (A–F), breakdown across 5 dimensions (structured data, meta tags, content quality, technical config, AI signals), complete issues list, and prioritised recommendations. Use this when you need a comprehensive analysis of why a business isn't appearing in AI assistant answers.",
+    description: "Run a full AI visibility audit on a website using Cited By AI's CPS Lite framework. Returns a score 0–100, grade (A–F), breakdown across 5 dimensions (structured data, meta tags, content quality, technical config, AI signals), complete issues list, and prioritised recommendations. Use this when you need a comprehensive analysis of why a business isn't appearing in AI assistant answers.",
     inputSchema: {
       type: "object",
       properties: {
@@ -474,9 +474,9 @@ async function handleMcp(req) {
         serverInfo: {
           name:        SERVER_NAME,
           version:     SERVER_VERSION,
-          description: "CPS® Lite — AI citation readiness checker by Cited By AI. Audits any website for AI visibility across ChatGPT, Claude, Perplexity, Gemini, and Copilot. Free tool — full CPS® audit at citedbyai.info",
+          description: "CPS Lite — AI citation readiness checker by Cited By AI. Audits any website for AI visibility across ChatGPT, Claude, Perplexity, Gemini, and Copilot. Free tool — full CPS audit at citedbyai.info",
         },
-        instructions: `CPS® Lite by Cited By AI. Use get_aeo_score(url) to instantly check any website's AI citation readiness. Grade A–F, score 0–100, top issues. Free to use. Full audit: ${CTA_URL}`
+        instructions: `CPS Lite by Cited By AI. Use get_aeo_score(url) to instantly check any website's AI citation readiness. Grade A–F, score 0–100, top issues. Free to use. Full audit: ${CTA_URL}`
       });
     }
 
@@ -537,14 +537,14 @@ async function handleMcp(req) {
           const grade_label = { A: "Excellent", B: "Good", C: "Needs Work", D: "Poor", E: "Critical", F: "Not Visible" };
           const top3 = result.issues.slice(0, 3);
           const text = [
-            `CPS® Lite Score for ${result.url}`,
+            `CPS Lite Score for ${result.url}`,
             `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
             `Score: ${result.totalScore}/100   Grade: ${result.grade} — ${grade_label[result.grade] || ""}`,
             ``,
             top3.length > 0 ? `Top ${top3.length} issue${top3.length > 1 ? "s" : ""} blocking AI citation:` : "No critical issues found.",
             ...top3.map((issue, i) => `${i + 1}. ${issue}`),
             ``,
-            `Want the full CPS® audit across all 5 AI platforms?`,
+            `Want the full CPS audit across all 5 AI platforms?`,
             `→ ${CTA_URL}`,
             ``,
             `Powered by Cited By AI — ${HOME_URL}`,
@@ -582,7 +582,7 @@ async function handleMcp(req) {
             ``,
             `Technical: ${tech.score}/${tech.max}   AI Signals: ${ai.score}/${ai.max}`,
             ``,
-            `Get a full CPS® audit across ChatGPT, Claude, Perplexity, Gemini & Copilot:`,
+            `Get a full CPS audit across ChatGPT, Claude, Perplexity, Gemini & Copilot:`,
             `→ ${CTA_URL}`,
             ``,
             `Powered by Cited By AI — ${HOME_URL}`,
@@ -616,7 +616,7 @@ function formatAuditSummary(r) {
   const grade_emoji  = { A: "🟢", B: "🟡", C: "🟠", D: "🔴", E: "🔴", F: "⛔" };
   const grade_label  = { A: "Excellent", B: "Good", C: "Needs Work", D: "Poor", E: "Critical", F: "Not Visible" };
   const emoji = grade_emoji[r.grade] || "⚪";
-  let out = `${emoji} CPS® Lite Score: ${r.totalScore}/100 — Grade ${r.grade} (${grade_label[r.grade] || ""})\n`;
+  let out = `${emoji} CPS Lite Score: ${r.totalScore}/100 — Grade ${r.grade} (${grade_label[r.grade] || ""})\n`;
   out += `URL: ${r.url}\n`;
   out += `Audited: ${r.auditedAt}\n\n`;
   out += `SCORE BREAKDOWN:\n`;
@@ -638,8 +638,8 @@ function formatAuditSummary(r) {
     out += "\n";
   }
   out += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
-  out += `This is a CPS® Lite scan — 5 dimensions, instant, free.\n`;
-  out += `The full CPS® audit covers all 5 AI platforms with per-prompt SOV,\n`;
+  out += `This is a CPS Lite scan — 5 dimensions, instant, free.\n`;
+  out += `The full CPS audit covers all 5 AI platforms with per-prompt SOV,\n`;
   out += `E-E-A-T scoring, citation source tracking, and a 30-section report.\n`;
   out += `Book a full audit: ${CTA_URL}\n`;
   out += `Cited By AI — ${HOME_URL}`;
@@ -677,7 +677,7 @@ export default {
         ok:              true,
         name:            SERVER_NAME,
         version:         SERVER_VERSION,
-        poweredBy:       "CPS® Lite by Cited By AI",
+        poweredBy:       "CPS Lite by Cited By AI",
         protocol:        "MCP Streamable HTTP",
         protocolVersion: PROTOCOL_VERSION,
         endpoint:        "/mcp",
@@ -692,9 +692,9 @@ export default {
     if (url.pathname === "/.well-known/mcp/server-card.json") {
       return new Response(JSON.stringify({
         serverInfo: {
-          name:        "CPS® Lite by Cited By AI",
+          name:        "CPS Lite by Cited By AI",
           version:     SERVER_VERSION,
-          description: "Free AI citation readiness checker. Powered by Cited By AI's CPS® framework. Audits any website for AI visibility across ChatGPT, Claude, Perplexity, Gemini, and Copilot. Three tools: get_aeo_score, analyze_aeo, check_ai_readiness. Full CPS® audit at citedbyai.info"
+          description: "Free AI citation readiness checker. Powered by Cited By AI's CPS framework. Audits any website for AI visibility across ChatGPT, Claude, Perplexity, Gemini, and Copilot. Three tools: get_aeo_score, analyze_aeo, check_ai_readiness. Full CPS audit at citedbyai.info"
         },
         tools:     TOOLS,
         resources: [],
@@ -736,7 +736,7 @@ export default {
           url:        result.url,
           score:      result.totalScore,
           grade:      result.grade,
-          poweredBy:  "CPS® Lite by Cited By AI",
+          poweredBy:  "CPS Lite by Cited By AI",
           components: {
             schema:    { score: result.breakdown.schema.score,    max: result.breakdown.schema.max },
             meta:      { score: result.breakdown.meta.score,      max: result.breakdown.meta.max },
