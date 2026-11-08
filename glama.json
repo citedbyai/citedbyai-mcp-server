@@ -1,8 +1,8 @@
 {
   "$schema": "https://glama.ai/mcp/servers/schema.json",
   "name": "citedbyai-mcp-server",
-  "displayName": "CPS® Lite by Cited By AI",
-  "description": "Free AI citation readiness checker powered by Cited By AI's CPS® framework. Instantly scores any website 0-100 across structured data, meta tags, content quality, technical config, and AI signals. Returns a grade (A-F) and the top issues blocking AI citation in ChatGPT, Claude, Perplexity, Gemini, and Copilot. No auth required.",
+  "displayName": "CPS Lite by Cited By AI",
+  "description": "Free AI citation readiness checker powered by Cited By AI's CPS framework. Instantly scores any website 0-100 across structured data, meta tags, content quality, technical config, and AI signals. Returns a grade (A-F) and the top issues blocking AI citation in ChatGPT, Claude, Perplexity, Gemini, and Copilot. No auth required.",
   "license": "MIT",
   "homepage": "https://citedbyai.info",
   "repository": {
@@ -20,7 +20,7 @@
   "tools": [
     {
       "name": "get_aeo_score",
-      "description": "Get a quick AI citation readiness score for any website. Returns grade (A-F), score (0-100), and top 3 issues blocking AI citation. Powered by Cited By AI's CPS® framework."
+      "description": "Get a quick AI citation readiness score for any website. Returns grade (A-F), score (0-100), and top 3 issues blocking AI citation. Powered by Cited By AI's CPS framework."
     },
     {
       "name": "analyze_aeo",
